@@ -1,10 +1,23 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">My App</a>
+		</div>
+		<div class="navbar-right search-field">
+			{{#bs-form formLayout="inline" action="search"}}
+				<label class="control-label">Search By Name:</label>
+				{{bs-input type="text" value=searchField}}
+			{{/bs-form}}
+		</div>
+	</div>
+</nav>
 <div class="container">
 	<h2 id="title">Flickr feed:</h2>
 	<ul>
 	{{#each photo in photos}}
-		<li>
-			{{photo.title}} ({{photo.username}})<br/>
-			<img src="{{photo.url}}" />
+		<li class="list-group-item">
+			<h1>{{photo.title}}</h1> <h6>by {{photo.username}}</h6><br/>
+			<img class="feed-img" src="{{photo.url}}" />
 		</li>
 		{{/each}}
 	</ul>
