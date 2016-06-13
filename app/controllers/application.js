@@ -61,7 +61,8 @@ var ps = [
 ];
 
 for(var i = 0; i < ps.length; i++) {
-	testPhotos.pushObject(ps[i]);
+	var ph = Photo.create(ps[i]);
+	testPhotos.pushObject(ph);
 }
 
 export default Ember.Controller.extend({
