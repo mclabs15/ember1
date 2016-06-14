@@ -20,7 +20,7 @@ module.exports = function(environment) {
     
   contentSecurityPolicy: {
     'default-src': "'self' ",
-    'script-src': "'self' ", // Allow scripts from self only, this prevents injection and XSS attacks
+    'script-src': "'self' https://api.flickr.com/*", // Allow scripts from self only, this prevents injection and XSS attacks
     'font-src': "'self' http: https:", // Allow fonts to be loaded from self or any http/https source
     'connect-src': "'self' ", // Allow data (ajax/websocket) from self only (The same IP as this app)
     'img-src': "'self' http: https:", //Allow images from any http/https server

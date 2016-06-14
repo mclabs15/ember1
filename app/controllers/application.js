@@ -1,84 +1,73 @@
 import Ember from 'ember';
 
-var Photo = Ember.Object.extend({
+/*var Photo = Ember.Object.extend({
 	title:'',
 	username:'',
-	url:''
-});
+	owner: '',
+	id: '',
+	farm: 0,
+	secret: '',
+	server: '',
+	url: function(){
+		return "https://farm"+this.get('farm')+
+		".staticflickr.com/"+this.get('server')+
+		"/"+this.get('id')+"_"+this.get('secret')+"_b.jpg";
+	}.property('farm','server','id','secret'),
+});*/
 
 var PhotoCollection = Ember.ArrayProxy.extend(Ember.SortableMixin, {
-	sortProperties:['title'],
-	sortAscending:false,
+	sortProperties: ['title'],
+	sortAscending: true,
 	content: [],
 });
 
-var testPhotos = PhotoCollection.create();
-
-/*var testimg1 = Photo.create({
-	title:"Google logo",
-	username:"google",
-	url:"https://www.google.com/images/srpr/logo11w.png"
-});
-var testimg2 = Photo.create({
-	title:"UNO logo",
-	username:"UNO",
-	url:"http://unomaha.edu/_files/images/logo-subsite-o-2.png"
-});
-
-
-var testimg3 = Photo.create({
-	title:"Orange Man",
-	username:"Orange",
-	url:"http://i.imgur.com/Ip4CbC5.jpg"
-});*/
-/*
-testPhotos.pushObject(testimg1);
-testPhotos.pushObject(testimg2);
-testPhotos.pushObject(testimg3);
-*/
-var ps = [
-{
-	title:"Google logo",
-	username:"google",
-	url:"https://www.google.com/images/srpr/logo11w.png"
-},
-{
-	title:"UNO logo",
-	username:"UNO",
-	url:"http://unomaha.edu/_files/images/logo-subsite-o-2.png"
-},
-{
-	title:"Orange Man",
-	username:"Orange",
-	url:"http://i.imgur.com/Ip4CbC5.jpg"
-},
-{
-	title: "Hubble Carina Nebula",
-	username: "NASA",
-	url: "http://imgsrc.hubblesite.org/hu/db/images/hs-2010-13-a-1920x1200_wallpaper.jpg"
-}
-
-];
-
-for(var i = 0; i < ps.length; i++) {
-	var ph = Photo.create(ps[i]);
-	testPhotos.pushObject(ph);
-}
-
 export default Ember.Controller.extend({
-	photos: testPhotos,
+	photos: PhotoCollection.create(),
 	searchField: '',
-	filteredPhotos: testPhotos,
+	tagSearchField:'',
+	filteredPhotos: function () {
+		var filter = this.get('searchField');
+		var rx = new RegExp(filter, 'gi');
+		var photos = this.get('photos');
+
+		return photos.filter(function(photo){
+			return photo.get('title').match(rx) || photo.get('username').match(rx);
+		});
+	}.property('photos.@each','searchField'),
 	actions: {
 		search: function () {
-			var filter = this.get('searchField');
-			var rx = new RegExp(filter, 'gi');
-			var photos = this.get('photos');
-			this.set('filteredPhotos',
-				photos.filter(function(photo){
-					return photo.get('title').match(rx) || photo.get('username').match(rx);
-				})
-			);
-		}
+			this.get('photos').content.clear();
+			this.store.unloadAll('photo');
+			this.send('getPhotos',this.get('tagSearchField'));
+		},
+		getPhotos: function(tag){
+		var apiKey = 'c89d5f163cec11aa357c7ca65a07c052';
+		var host = 'https://api.flickr.com/services/rest/';
+		var method = "flickr.tags.getClusterPhotos";
+		var requestURL = host + "?method="+method + "&api_key="+apiKey+"&tag="+tag+"&format=json&nojsoncallback=1";
+		var photos = this.get('photos');
+		var t = this;
+		Ember.$.getJSON(requestURL, function(data){
+			//callback for successfully completed requests
+			console.log(data);
+			data.photos.photo.map(function(photo) {
+				var newPhotoItem = t.store.createRecord('photo',{
+					title: photo.title,
+					username: photo.username,
+					//flickr extra data
+					owner: photo.owner,
+					//flickr url data
+					id: photo.id,
+					farm: photo.farm,
+					secret: photo.secret,
+					server: photo.server,
+				});
+				photos.pushObject(newPhotoItem);
+			});
+		});
+	},
+
+
+
 	}
 });
