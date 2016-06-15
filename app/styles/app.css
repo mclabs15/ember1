@@ -1,5 +1,8 @@
 .feed-img {
-	max-width: 100%
+	background: url('../loading-img.gif');
+	min-height: 64px;
+	min-width: 64px;
+	max-width: 240px;
 }
 body { padding-top: 70px; }
 .search-field {
@@ -13,4 +16,19 @@ body { padding-top: 70px; }
 .post-tag-button {
 	padding:2px;
 	margin-top: 1px;
+}
+.downloaded {
+	background-color: #F22;
+}
+.downloaded:hover {
+	background-color: #F55;
+}
+.download {
+	background-color: #272;
+}
+.download:hover {
+	background-color: #373;
+}
+.download:pressed {
+	background-color: #373;
 }

@@ -1,6 +1,7 @@
 import DS from 'ember-data';
 
 export default DS.Model.extend({
+	grabbed:false,
 	title: DS.attr('string'),
 	dates: DS.attr('object'),
 	owner: DS.attr('object'),
